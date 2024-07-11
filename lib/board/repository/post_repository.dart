@@ -19,4 +19,11 @@ class PostRepository {
     final data = response as List<dynamic>;
     return data.map((json) => Post.fromJson(json)).toList();
   }
+
+  Future<void> createPost(String title, String content) async {
+    final response = await _client.from('posts').insert({
+      'title': title,
+      'content': content,
+    });
+  }
 }

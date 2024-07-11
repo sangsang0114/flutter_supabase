@@ -13,3 +13,19 @@ final postProvider = FutureProvider<List<Post>>((ref) async {
   final repository = ref.watch(postRepositoryProvider);
   return repository.fetchPosts();
 });
+
+class PostNotifier extends StateNotifier<List<Post>> {
+  final PostRepository _repository;
+
+  PostNotifier(this._repository) : super([]);
+
+  Future<void> createPost(String title, String content) async {
+    await _repository.createPost(title, content);
+    state = await _repository.fetchPosts();
+  }
+}
+
+final postNotifierProvider = StateNotifierProvider<PostNotifier, List<Post>>((ref) {
+  final repository = ref.watch(postRepositoryProvider);
+  return PostNotifier(repository);
+});

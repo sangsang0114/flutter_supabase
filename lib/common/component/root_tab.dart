@@ -1,6 +1,7 @@
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_supabase/board/view/board_view.dart';
+import 'package:flutter_supabase/board/view/post_create_view.dart';
 
 class RootTab extends StatefulWidget {
   @override
@@ -24,7 +25,7 @@ class _RootTabState extends State<RootTab> {
         onPressed: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => Container()),
+            MaterialPageRoute(builder: (context) => PostCreateView()),
           );
         },
         child: Icon(Icons.add),
@@ -49,7 +50,7 @@ class _RootTabState extends State<RootTab> {
             if (index == 1) {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => Container()),
+                MaterialPageRoute(builder: (context) => PostCreateView()),
               );
             } else {
               _currentIndex = index;
