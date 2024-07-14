@@ -1,6 +1,4 @@
 // board/view/board_view.dart
-import 'dart:typed_data';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../provider/post_provider.dart';
@@ -8,7 +6,7 @@ import '../provider/post_provider.dart';
 class BoardView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final postAsyncValue = ref.watch(postNotifierProvider);
+    final postAsyncValue = ref.watch(postProvider);
 
     return Scaffold(
       appBar: AppBar(
@@ -43,68 +41,6 @@ class BoardView extends ConsumerWidget {
                       padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: Text(post.content),
                     ),
-                    if (post.imageUrls.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: SizedBox(
-                          height: 200,
-                          child: ListView.builder(
-                            scrollDirection: Axis.horizontal,
-                            itemCount: post.imageUrls.length,
-                            itemBuilder: (context, imageIndex) {
-                              final imageUrl = post.imageUrls[imageIndex];
-                              return FutureBuilder<Uint8List>(
-                                future: ref.read(postRepositoryProvider).downloadTransformedImage(imageUrl),
-                                builder: (context, snapshot) {
-                                  if (snapshot.connectionState == ConnectionState.waiting) {
-                                    return Center(child: CircularProgressIndicator());
-                                  } else if (snapshot.hasError) {
-                                    return Center(child: Text('Error: ${snapshot.error}'));
-                                  } else {
-                                    final imageData = snapshot.data!;
-                                    return GestureDetector(
-                                      onTap: () async {
-                                        try {
-                                          final exifData = await ref.read(postRepositoryProvider).fetchExifData(imageUrl);
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) {
-                                              return AlertDialog(
-                                                title: Text('EXIF Data'),
-                                                content: SingleChildScrollView(
-                                                  child: ListBody(
-                                                    children: exifData.entries.map((entry) {
-                                                      return Text('${entry.key}: ${entry.value}');
-                                                    }).toList(),
-                                                  ),
-                                                ),
-                                                actions: [
-                                                  TextButton(
-                                                    onPressed: () {
-                                                      Navigator.of(context).pop();
-                                                    },
-                                                    child: Text('Close'),
-                                                  ),
-                                                ],
-                                              );
-                                            },
-                                          );
-                                        } catch (e) {
-                                          print('Error fetching EXIF data: $e');
-                                        }
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Image.memory(imageData),
-                                      ),
-                                    );
-                                  }
-                                },
-                              );
-                            },
-                          ),
-                        ),
-                      ),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Text(
