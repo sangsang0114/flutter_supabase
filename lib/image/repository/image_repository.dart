@@ -1,7 +1,8 @@
 // lib/image/repository/image_repository.dart
 import 'dart:io';
-import 'package:supabase_flutter/supabase_flutter.dart';
+import 'dart:typed_data';
 import 'package:exif/exif.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class ImageRepository {
   final SupabaseClient _client;
@@ -84,5 +85,24 @@ class ImageRepository {
     final file = File('${Directory.systemTemp.path}/temp_image.jpg');
     await response.pipe(file.openWrite());
     return file;
+  }
+
+  Future<Uint8List> downloadTransformedImage(String imageUrl,
+      {int width = 800, int height = 600, int quality = 80}) async {
+    // Extract the file name from the URL
+    final uri = Uri.parse(imageUrl);
+    final fileName = uri.pathSegments.last;
+
+    print(fileName); // Debugging line to check the file name
+
+    final data = await _client.storage.from('images').download(
+          fileName,
+          transform: TransformOptions(
+            width: width,
+            height: height,
+            quality: quality,
+          ),
+        );
+    return data;
   }
 }

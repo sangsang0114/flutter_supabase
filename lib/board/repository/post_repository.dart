@@ -1,4 +1,5 @@
 // board/repository/post_repository.dart
+import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../image/repository/image_repository.dart';
 import '../model/post.dart';
@@ -61,5 +62,9 @@ class PostRepository {
 
   Future<Map<String, dynamic>> fetchExifData(String imageUrl) async {
     return await _imageRepository.fetchExifData(imageUrl);
+  }
+
+  Future<Uint8List> downloadTransformedImage(String fileName, {int width = 800, int height = 600, int quality = 80}) async {
+    return await _imageRepository.downloadTransformedImage(fileName, width: width, height: height, quality: quality);
   }
 }
